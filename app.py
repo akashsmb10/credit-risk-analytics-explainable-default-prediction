@@ -14,9 +14,10 @@ st.markdown("""
 <style>
     .stApp { background: #f5f8fc; color: #172b4d; }
     .block-container { max-width: 1440px; padding-top: 2.3rem; padding-bottom: 3rem; }
-    [data-testid="stSidebar"] { background: #102a43; }
+    [data-testid="stSidebar"] { background: linear-gradient(180deg, #102a43 0%, #163e5a 100%); }
     [data-testid="stSidebar"] * { color: #eef6fa; }
     [data-testid="stSidebar"] [data-testid="stAlert"] * { color: #172b4d; }
+    [data-testid="stSidebar"] [role="radiogroup"] label { background: rgba(255,255,255,.06); border-radius: 8px; margin: .22rem 0; padding: .35rem .45rem; }
     [data-testid="stMetric"] { background: #ffffff; border: 1px solid #e1e8f0; border-top: 4px solid #0f766e; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(15, 39, 66, .05); }
     [data-testid="stMetricLabel"] { color: #52657d; font-size: .86rem; }
     [data-testid="stMetricValue"] { color: #102a43; }
@@ -34,6 +35,9 @@ st.markdown("""
     .kpi-card .label { color: #52657d; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
     .kpi-card .value { color: #102a43; font-size: 2rem; line-height: 1.2; font-weight: 750; margin-top: .35rem; }
     .kpi-card .detail { color: #64748b; font-size: .78rem; margin-top: .35rem; }
+    .page-banner { background: #e7f4f1; border-left: 5px solid #0f766e; color: #173f4f; border-radius: 8px; padding: .8rem 1rem; margin: 0 0 1.25rem; }
+    .journey-step { border-left: 2px solid #68b6a7; padding: .1rem 0 .7rem 1rem; margin-left: .5rem; color: #52657d; }
+    .journey-step strong { color: #102a43; }
     [data-baseweb="tab-list"] { gap: .4rem; border-bottom: 1px solid #dbe5ed; }
     [data-baseweb="tab"] { background: #edf3f7; border-radius: 8px 8px 0 0; height: 42px; padding: 0 14px; font-weight: 600; color: #334e68; }
     [aria-selected="true"][data-baseweb="tab"] { background: #dff4ee; color: #0f766e; }
@@ -91,6 +95,18 @@ def kpi_card(label, value, detail):
 
 
 with st.sidebar:
+    st.markdown("## ◈ RiskLens")
+    st.caption("Credit-risk analytics portfolio")
+    st.divider()
+    page = st.radio(
+        "Explore the project",
+        [
+            "⌂  Overview", "◫  EDA & patterns", "⌁  Model & calibration",
+            "◎  Review simulation", "✦  Explainability", "◌  Fairness & use", "≡  Documentation",
+        ],
+        label_visibility="visible",
+    )
+    st.divider()
     st.header("Educational use only")
     st.warning("Historical UCI Taiwan credit-card data from 2005. This dashboard is retrospective and read-only.")
     st.markdown(
@@ -106,21 +122,25 @@ st.markdown("""
 <div class="portfolio-kicker">Educational portfolio dashboard</div>
 <div class="portfolio-hero">
   <h1>Credit Risk Analytics &amp; Explainable Default Prediction</h1>
-  <p>Historical-data analysis • calibrated risk ranking • no automated lending decisions</p>
+  <p>Historical-data analysis • calibrated risk ranking • human-review simulation only</p>
 </div>
 """, unsafe_allow_html=True)
 
-tabs = st.tabs([
-    "Project Overview", "EDA & Portfolio Patterns", "Model Performance & Calibration",
-    "Review-Capacity Simulation", "Explainability", "Fairness & Responsible Use", "Documentation",
-])
-
-with tabs[0]:
+if page == "⌂  Overview":
     st.header("What this project demonstrates")
+    st.markdown('<div class="page-banner"><strong>Portfolio lens:</strong> a reproducible, historical analysis of how a fixed review team could prioritize a limited queue—not a tool for automated lending decisions.</div>', unsafe_allow_html=True)
     st.write("The project estimates and ranks the historical likelihood of a recorded next-month default-payment outcome so a limited manual-review queue can be simulated. It is not a current bank model or a lending policy.")
     st.info("Dataset: 30,000 historical Taiwan credit-card records; amounts are NT$; repayment, bill, and payment history cover April–September 2005. `Y=1` means recorded default payment next month.")
     st.subheader("Project workflow")
-    st.markdown("**Data → EDA → model comparison → calibration → review-capacity simulation → SHAP explanations → held-out fairness audit**")
+    journey_left, journey_right = st.columns(2)
+    with journey_left:
+        st.markdown('<div class="journey-step"><strong>01 · Understand the portfolio</strong><br>EDA and documented data-quality checks.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="journey-step"><strong>02 · Compare feature sets</strong><br>Same split, same candidates, validation-led selection.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="journey-step"><strong>03 · Calibrate probabilities</strong><br>Training-only calibration; validation chose the method.</div>', unsafe_allow_html=True)
+    with journey_right:
+        st.markdown('<div class="journey-step"><strong>04 · Simulate limited review</strong><br>Ranked top-k capacity policy, not a universal cutoff.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="journey-step"><strong>05 · Explain associations</strong><br>Global and de-identified local Kernel SHAP.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="journey-step"><strong>06 · Audit responsible use</strong><br>Held-out subgroup diagnostics and documented limitations.</div>', unsafe_allow_html=True)
     st.caption("Each stage uses saved artifacts. This dashboard does not recalculate, retrain, or score any records.")
     st.subheader("Final educational setup")
     st.markdown("Frozen baseline **XGBoost** using `X1` and `X6`–`X23` → **isotonic calibration** → retrospective **top-10% ranked review queue**.")
@@ -145,8 +165,9 @@ with tabs[0]:
             with cols[4]: kpi_card("Accounts reviewed", f"{top10['accounts_reviewed']:,}", "Of 6,000 held-out accounts")
             st.warning(f"In this held-out historical simulation, {top10['observed_defaults_captured']:,} observed defaults appeared in the {top10['accounts_reviewed']:,}-account review queue. This does not mean defaults were prevented or savings were achieved.")
 
-with tabs[1]:
+if page == "◫  EDA & patterns":
     st.header("EDA & portfolio patterns")
+    st.markdown('<div class="page-banner"><strong>Question:</strong> What did the historical portfolio look like before any model was trained?</div>', unsafe_allow_html=True)
     st.caption("These charts describe historical associations in the supplied records. They do not demonstrate causation.")
     left, right = st.columns(2)
     with left:
@@ -167,8 +188,9 @@ with tabs[1]:
     """)
     st.error("Cautions: correlation is not causation. UCI documentation does not define repayment-status codes `0` and `-2`, so this project does not label them as on-time or otherwise infer their meaning. Same-month bills and payments are not treated as a repayment ratio or current balance.")
 
-with tabs[2]:
+if page == "⌁  Model & calibration":
     st.header("Model performance & calibration")
+    st.markdown('<div class="page-banner"><strong>Question:</strong> Does the model rank recorded defaults well, and are its probability estimates sensible?</div>', unsafe_allow_html=True)
     comparison = require_json("model_comparison_metrics.json")
     if comparison:
         baseline = comparison["baseline"]
@@ -194,8 +216,9 @@ with tabs[2]:
         with st.expander("Probability calibration: Brier score and reliability"):
             st.write("Brier score is average squared probability error; lower is better. A reliability curve compares average predicted probability with the observed rate in score bins. Calibration concerns probability levels, while ROC-AUC concerns ranking.")
 
-with tabs[3]:
+if page == "◎  Review simulation":
     st.header("Review-capacity simulation")
+    st.markdown('<div class="page-banner"><strong>Question:</strong> With a limited review team, how many recorded historical defaults appear in the highest-ranked accounts?</div>', unsafe_allow_html=True)
     st.caption("A top-k policy is shown because a fixed review team capacity is easier to interpret than treating 0.50 as a universal business threshold.")
     calibration = require_json("calibration_threshold_metrics.json")
     if calibration:
@@ -221,8 +244,9 @@ with tabs[3]:
         show_figure("12_validation_threshold_tradeoff.png", "Validation threshold trade-offs")
         show_figure("14_validation_cost_sensitivity.png", "Illustrative validation cost sensitivity")
 
-with tabs[4]:
+if page == "✦  Explainability":
     st.header("Explainability")
+    st.markdown('<div class="page-banner"><strong>Question:</strong> Which historical account fields most influenced the frozen model's learned associations?</div>', unsafe_allow_html=True)
     st.caption("SHAP explains learned model associations in the frozen XGBoost model. It is not causality, certainty, fairness proof, or a decision instruction.")
     st.info("Feature guide: `X6` is the latest recorded repayment-status code, `X1` is granted credit, `X12`–`X17` are bill amounts, and `X18`–`X23` are payment amounts.")
     left, right = st.columns(2)
@@ -248,8 +272,9 @@ with tabs[4]:
             show_figure(f"17_shap_local_{name}.png", "De-identified local SHAP waterfall: raw-model contributions only")
     st.warning("No person can be identified here. These three fixed examples are teaching cases, not profiles to copy into a real decision process.")
 
-with tabs[5]:
+if page == "◌  Fairness & use":
     st.header("Fairness & responsible use")
+    st.markdown('<div class="page-banner"><strong>Question:</strong> Do held-out performance and review-capture patterns differ across recorded subgroups?</div>', unsafe_allow_html=True)
     st.write("Recorded sex, education, marital-status, and age were excluded from training, calibration, SHAP, thresholds, and ranking. They were used only as held-out audit labels.")
     left, right = st.columns(2)
     with left: show_figure("18_fairness_subgroup_sizes_default_rates.png", "Held-out subgroup sizes and historical default rates")
@@ -260,8 +285,9 @@ with tabs[5]:
     st.subheader("Responsible-use checklist")
     st.markdown("- Human review before any action\n- Monitoring for performance and calibration drift\n- Escalation and appeal routes\n- Governance, privacy, and legal review\n- No automated approval, rejection, pricing, collections, or lending decision")
 
-with tabs[6]:
+if page == "≡  Documentation":
     st.header("Documentation")
+    st.markdown('<div class="page-banner"><strong>Audit trail:</strong> each report below records the project choices, evidence, and limitations.</div>', unsafe_allow_html=True)
     st.caption("These saved artifacts document the analysis; no live data or prediction service is connected.")
     docs = {
         "Model card": "model_card.md", "Data dictionary": "data_dictionary.md",
