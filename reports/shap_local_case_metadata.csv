@@ -1,0 +1,4 @@
+case,calibrated_risk_probability,raw_xgboost_probability,review_queue_status,actual_historical_outcome,rank_within_held_out_test
+high_risk_recorded_default,0.9563025236129761,0.8935769200325012,top 10% review queue,recorded default next month,1
+high_risk_no_recorded_default,0.8002921581268311,0.833191454410553,top 10% review queue,no recorded default next month,24
+lower_risk_recorded_default,0.01703318189829588,0.025571873411536217,outside top 10% review queue,recorded default next month,5989

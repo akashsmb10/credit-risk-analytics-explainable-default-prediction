@@ -1,0 +1,133 @@
+{
+  "split_sizes": {
+    "train": 18000,
+    "validation": 6000,
+    "test": 6000
+  },
+  "feature_list": [
+    "X1",
+    "X6",
+    "X7",
+    "X8",
+    "X9",
+    "X10",
+    "X11",
+    "X12",
+    "X13",
+    "X14",
+    "X15",
+    "X16",
+    "X17",
+    "X18",
+    "X19",
+    "X20",
+    "X21",
+    "X22",
+    "X23"
+  ],
+  "validation": {
+    "dummy": {
+      "accuracy": 0.7788333333333334,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "roc_auc": 0.5,
+      "average_precision": 0.22116666666666668,
+      "brier_score": 0.172251975308642,
+      "confusion_matrix": [
+        [
+          4673,
+          0
+        ],
+        [
+          1327,
+          0
+        ]
+      ]
+    },
+    "logistic_regression": {
+      "accuracy": 0.8071666666666667,
+      "precision": 0.6888888888888889,
+      "recall": 0.23360964581763377,
+      "f1": 0.3489026449071469,
+      "roc_auc": 0.7055249004567115,
+      "average_precision": 0.48029034094113565,
+      "brier_score": 0.1485762192553108,
+      "confusion_matrix": [
+        [
+          4533,
+          140
+        ],
+        [
+          1017,
+          310
+        ]
+      ]
+    },
+    "xgboost": {
+      "accuracy": 0.813,
+      "precision": 0.648766328011611,
+      "recall": 0.33685003767897514,
+      "f1": 0.44345238095238093,
+      "roc_auc": 0.7744562189337938,
+      "average_precision": 0.5346859645922323,
+      "brier_score": 0.13801025207950904,
+      "confusion_matrix": [
+        [
+          4431,
+          242
+        ],
+        [
+          880,
+          447
+        ]
+      ]
+    }
+  },
+  "chosen_model": "xgboost",
+  "review_capacity_validation": [
+    {
+      "review_fraction": 0.05,
+      "accounts_reviewed": 300,
+      "observed_defaults_captured": 214,
+      "precision_among_reviewed": 0.7133333333333334,
+      "recall_of_observed_defaults": 0.16126601356443104,
+      "random_expected_defaults": 66.35
+    },
+    {
+      "review_fraction": 0.1,
+      "accounts_reviewed": 600,
+      "observed_defaults_captured": 401,
+      "precision_among_reviewed": 0.6683333333333333,
+      "recall_of_observed_defaults": 0.3021853805576488,
+      "random_expected_defaults": 132.7
+    },
+    {
+      "review_fraction": 0.2,
+      "accounts_reviewed": 1200,
+      "observed_defaults_captured": 662,
+      "precision_among_reviewed": 0.5516666666666666,
+      "recall_of_observed_defaults": 0.49886963074604374,
+      "random_expected_defaults": 265.4
+    }
+  ],
+  "test": {
+    "accuracy": 0.8211666666666667,
+    "precision": 0.6773743016759777,
+    "recall": 0.3654860587792012,
+    "f1": 0.4747919725893294,
+    "roc_auc": 0.7840405310631018,
+    "average_precision": 0.5680868480035177,
+    "brier_score": 0.13325501607547546,
+    "confusion_matrix": [
+      [
+        4442,
+        231
+      ],
+      [
+        842,
+        485
+      ]
+    ]
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "compatibility_solution": "KernelExplainer fallback: SHAP 0.49.1 TreeExplainer incompatible with XGBoost 3.2.0 vector base_score",
+  "feature_order": [
+    "X1",
+    "X6",
+    "X7",
+    "X8",
+    "X9",
+    "X10",
+    "X11",
+    "X12",
+    "X13",
+    "X14",
+    "X15",
+    "X16",
+    "X17",
+    "X18",
+    "X19",
+    "X20",
+    "X21",
+    "X22",
+    "X23"
+  ],
+  "background_size": 40,
+  "global_sample_size": 160,
+  "kernel_nsamples": 300,
+  "base_value_raw_probability": 0.18249129513278606,
+  "top_10_global_features": [
+    {
+      "feature": "X6",
+      "mean_absolute_shap_value": 0.06340776973957354
+    },
+    {
+      "feature": "X1",
+      "mean_absolute_shap_value": 0.019694960720263978
+    },
+    {
+      "feature": "X19",
+      "mean_absolute_shap_value": 0.014967697243163916
+    },
+    {
+      "feature": "X20",
+      "mean_absolute_shap_value": 0.01403250543745464
+    },
+    {
+      "feature": "X8",
+      "mean_absolute_shap_value": 0.012301892087007273
+    },
+    {
+      "feature": "X12",
+      "mean_absolute_shap_value": 0.012038695922208582
+    },
+    {
+      "feature": "X18",
+      "mean_absolute_shap_value": 0.011986023225633781
+    },
+    {
+      "feature": "X7",
+      "mean_absolute_shap_value": 0.00788272719383808
+    },
+    {
+      "feature": "X9",
+      "mean_absolute_shap_value": 0.006944289996103683
+    },
+    {
+      "feature": "X21",
+      "mean_absolute_shap_value": 0.00605407406251315
+    }
+  ],
+  "local_cases": [
+    {
+      "case": "high_risk_recorded_default",
+      "calibrated_risk_probability": 0.9563025236129761,
+      "raw_xgboost_probability": 0.8935769200325012,
+      "review_queue_status": "top 10% review queue",
+      "actual_historical_outcome": "recorded default next month",
+      "rank_within_held_out_test": 1
+    },
+    {
+      "case": "high_risk_no_recorded_default",
+      "calibrated_risk_probability": 0.8002921581268311,
+      "raw_xgboost_probability": 0.833191454410553,
+      "review_queue_status": "top 10% review queue",
+      "actual_historical_outcome": "no recorded default next month",
+      "rank_within_held_out_test": 24
+    },
+    {
+      "case": "lower_risk_recorded_default",
+      "calibrated_risk_probability": 0.01703318189829588,
+      "raw_xgboost_probability": 0.025571873411536217,
+      "review_queue_status": "outside top 10% review queue",
+      "actual_historical_outcome": "recorded default next month",
+      "rank_within_held_out_test": 5989
+    }
+  ],
+  "figures": [
+    "reports\\figures\\15_shap_global_beeswarm.png",
+    "reports\\figures\\16_shap_global_mean_absolute_bar.png",
+    "reports\\figures\\17_shap_local_high_risk_recorded_default.png",
+    "reports\\figures\\17_shap_local_high_risk_no_recorded_default.png",
+    "reports\\figures\\17_shap_local_lower_risk_recorded_default.png"
+  ]
+}

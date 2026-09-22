@@ -1,0 +1,20 @@
+feature,feature_value,shap_value_raw_probability,direction
+X18,81690,-0.027521742774244365,pushes raw model risk down
+X19,18225,-0.02493892589983605,pushes raw model risk down
+X6,-2,-0.0179880696055765,pushes raw model risk down
+X12,45106,-0.016304571947392415,pushes raw model risk down
+X1,500000,-0.014416712643562304,pushes raw model risk down
+X22,28050,-0.014230013715479453,pushes raw model risk down
+X20,27365,-0.013800846111376708,pushes raw model risk down
+X8,-2,-0.011412454041393403,pushes raw model risk down
+X9,-2,-0.008870519984475867,pushes raw model risk down
+X7,-2,-0.007435564997912786,pushes raw model risk down
+X10,-2,0.0,no material contribution in this approximation
+X15,27229,0.0,no material contribution in this approximation
+X14,18122,0.0,no material contribution in this approximation
+X13,81264,0.0,no material contribution in this approximation
+X11,-2,0.0,no material contribution in this approximation
+X16,21462,0.0,no material contribution in this approximation
+X17,27911,0.0,no material contribution in this approximation
+X21,21570,0.0,no material contribution in this approximation
+X23,17397,0.0,no material contribution in this approximation

@@ -1,0 +1,23 @@
+# Keep downloaded customer records and local environment files out of Git.
+data/
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.streamlit/secrets.toml
+.codex/
+.agents/
+credentials*
+secrets*
+
+# Superseded local teaching materials
+.archive/
+
+# Generated artifacts
+models/
+data/processed/
