@@ -101,7 +101,7 @@ with st.sidebar:
     page = st.radio(
         "Explore the project",
         [
-            "⌂  Overview", "◫  EDA & patterns", "⌁  Model & calibration",
+            "▣  Executive report", "⌂  Overview", "◫  EDA & patterns", "⌁  Model & calibration",
             "◎  Review simulation", "✦  Explainability", "◌  Fairness & use", "≡  Documentation",
         ],
         label_visibility="visible",
@@ -125,6 +125,14 @@ st.markdown("""
   <p>Historical-data analysis • calibrated risk ranking • human-review simulation only</p>
 </div>
 """, unsafe_allow_html=True)
+
+if page == "▣  Executive report":
+    st.header("Executive report pack")
+    st.markdown('<div class="page-banner"><strong>Power BI-style view:</strong> four presentation pages built from the same verified aggregate artifacts—no customer-level records, no new predictions, and no approve/reject recommendation.</div>', unsafe_allow_html=True)
+    show_figure("21_executive_overview.png", "Executive overview: verified headline metrics and retrospective review capacity")
+    show_figure("22_executive_portfolio_patterns.png", "Portfolio patterns: aggregate historical associations")
+    show_figure("23_executive_model_performance.png", "Model performance: fair comparison and learned associations")
+    show_figure("24_executive_review_simulation.png", "Review-capacity simulation: held-out historical outcomes")
 
 if page == "⌂  Overview":
     st.header("What this project demonstrates")
