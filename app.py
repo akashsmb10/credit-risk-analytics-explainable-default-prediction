@@ -98,12 +98,16 @@ with st.sidebar:
     st.markdown("## ◈ RiskLens")
     st.caption("Credit-risk analytics portfolio")
     st.divider()
+    page_options = [
+        "▣  Executive report", "⌂  Overview", "◫  EDA & patterns", "⌁  Model & calibration",
+        "◎  Review simulation", "✦  Explainability", "◌  Fairness & use", "≡  Documentation",
+    ]
+    requested_page = st.query_params.get("page")
+    selected_index = page_options.index(requested_page) if requested_page in page_options else 0
     page = st.radio(
         "Explore the project",
-        [
-            "▣  Executive report", "⌂  Overview", "◫  EDA & patterns", "⌁  Model & calibration",
-            "◎  Review simulation", "✦  Explainability", "◌  Fairness & use", "≡  Documentation",
-        ],
+        page_options,
+        index=selected_index,
         label_visibility="visible",
     )
     st.divider()

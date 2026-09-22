@@ -2,6 +2,12 @@
 
 An educational credit-risk prototype that ranks historical credit-card accounts for a simulated limited manual-review queue, then documents calibration, explainability, and subgroup-audit limits.
 
+### ▶ [Open the live dashboard](https://credit-risk-analytics-explainable-default-prediction-uxecbcwqu.streamlit.app)
+
+[![Live dashboard](https://img.shields.io/badge/Live%20Dashboard-Open%20in%20Streamlit-0F766E?style=for-the-badge&logo=streamlit&logoColor=white)](https://credit-risk-analytics-explainable-default-prediction-uxecbcwqu.streamlit.app)
+[![Python 3.10](https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white)](requirements.txt)
+[![Tests](https://img.shields.io/badge/Tests-9%20passed-1F8A70?style=for-the-badge)](tests/test_project.py)
+
 > Educational, retrospective analysis only. It is not a lending, approval, rejection, pricing, collections, or production decision system.
 
 ## Verified headline results
@@ -106,6 +112,7 @@ python src\compare_feature_sets.py
 python src\calibration_threshold_analysis.py
 python src\explain.py
 python src\fairness_audit.py
+python src\executive_report_pack.py
 
 # Launch the saved-artifact dashboard.
 streamlit run app.py
@@ -117,9 +124,27 @@ Current automated test status: **9 passed**.
 
 ## Dashboard
 
-The Streamlit dashboard is intentionally read-only. It shows saved EDA, performance, calibration, review-capacity, SHAP, fairness, and documentation artifacts. It does not accept customer data, display IDs/demographics/records, make predictions, rank new people, or recommend lending actions.
+### [▶ Open the live dashboard](https://credit-risk-analytics-explainable-default-prediction-uxecbcwqu.streamlit.app)
 
-Screenshots are intentionally not embedded because this repository uses saved artifact figures and the dashboard is designed to be run locally.
+The live dashboard is read-only and uses saved historical analysis artifacts; it does not accept customer data or make lending decisions. It shows EDA, model comparison, calibration, review-capacity simulation, SHAP, fairness, documentation, and an executive report pack.
+
+### Dashboard report previews
+
+<p align="center">
+  <a href="https://credit-risk-analytics-explainable-default-prediction-uxecbcwqu.streamlit.app">
+    <img src="reports/figures/21_executive_overview.png" alt="Executive overview with verified model and review-capacity metrics" width="92%">
+  </a>
+</p>
+
+<p align="center">
+  <img src="reports/figures/23_executive_model_performance.png" alt="Model comparison and top learned associations" width="92%">
+</p>
+
+<p align="center">
+  <img src="reports/figures/24_executive_review_simulation.png" alt="Retrospective review-capacity simulation" width="92%">
+</p>
+
+The dashboard does not display IDs, demographics, customer-level records, new-person predictions, or lending recommendations.
 
 ## Key reports
 
