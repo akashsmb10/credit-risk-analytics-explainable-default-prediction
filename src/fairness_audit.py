@@ -93,14 +93,16 @@ def make_figures(metrics):
     performance_path = figures / "19_fairness_performance_calibration_comparison.png"
     plt.savefig(performance_path, dpi=200, bbox_inches="tight"); plt.close()
 
-    fig, ax = plt.subplots(figsize=(14, 6))
-    labels = [f"{g}: {s}" for g, s in zip(frame.audit_group, frame.subgroup)]
-    bars = ax.bar(labels, frame.top_10_percent_capture_rate, color="#54A24B")
-    for bar, value in zip(bars, frame.top_10_percent_capture_rate):
-        ax.text(bar.get_x() + bar.get_width()/2, value, f"{value:.1%}", ha="center", va="bottom", fontsize=8)
-    ax.set(title="Capture of observed defaults within the fixed global top-10% review queue", ylabel="Within-subgroup capture rate", ylim=(0, min(1, frame.top_10_percent_capture_rate.max() * 1.25)))
-    ax.tick_params(axis="x", rotation=55)
-    plt.tight_layout()
+    fig, axes = plt.subplots(2, 2, figsize=(15, 10), constrained_layout=True)
+    for ax, group in zip(axes.flat, groups):
+        subset = frame[frame.audit_group == group].copy()
+        labels = subset.subgroup.str.replace(" (documented code ", "\n(code ", regex=False)
+        bars = ax.barh(labels, subset.top_10_percent_capture_rate, color="#0F766E")
+        for bar, value in zip(bars, subset.top_10_percent_capture_rate):
+            ax.text(value + 0.008, bar.get_y() + bar.get_height()/2, f"{value:.1%}", va="center", fontsize=9)
+        ax.set(title=group.replace("Recorded ", ""), xlabel="Capture of observed defaults", xlim=(0, min(0.55, subset.top_10_percent_capture_rate.max() * 1.35)))
+        ax.xaxis.set_major_formatter(lambda value, _: f"{value:.0%}")
+    fig.suptitle("Fixed global top-10% review queue: subgroup default capture", fontsize=16, fontweight="bold")
     review_path = figures / "20_fairness_top10_review_capture.png"
     plt.savefig(review_path, dpi=200, bbox_inches="tight"); plt.close()
     return size_path, performance_path, review_path

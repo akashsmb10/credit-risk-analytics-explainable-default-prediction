@@ -12,9 +12,18 @@ st.set_page_config(page_title="Credit Risk Analytics", page_icon="📊", layout=
 
 st.markdown("""
 <style>
-    .stApp { background: #f8fafc; }
-    [data-testid="stMetric"] { background: #ffffff; border-left: 4px solid #0f766e; padding: 12px; border-radius: 8px; }
-    h1, h2, h3 { color: #0f2742; }
+    .stApp { background: #f5f8fc; color: #172b4d; }
+    .block-container { max-width: 1440px; padding-top: 2.3rem; padding-bottom: 3rem; }
+    [data-testid="stMetric"] { background: #ffffff; border: 1px solid #e1e8f0; border-top: 4px solid #0f766e; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(15, 39, 66, .05); }
+    [data-testid="stMetricLabel"] { color: #52657d; font-size: .86rem; }
+    [data-testid="stMetricValue"] { color: #102a43; }
+    h1, h2, h3 { color: #102a43; letter-spacing: -.02em; }
+    .portfolio-kicker { color: #0f766e; font-size: .9rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    .portfolio-hero { background: linear-gradient(115deg, #102a43, #174e63); border-radius: 16px; color: #ffffff; padding: 1.7rem 2rem; margin: .35rem 0 1.6rem; }
+    .portfolio-hero h1 { color: #ffffff; margin: 0; }
+    .portfolio-hero p { color: #d9edf5; margin: .55rem 0 0; font-size: 1.05rem; }
+    .section-note { color: #52657d; font-size: .95rem; }
+    [data-testid="stDataFrame"] { border: 1px solid #e1e8f0; border-radius: 10px; overflow: hidden; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -61,8 +70,13 @@ with st.sidebar:
     )
     st.caption("Captured defaults are historical observed outcomes—not prevented defaults or financial savings.")
 
-st.title("Credit Risk Analytics & Explainable Default Prediction")
-st.caption("Read-only educational portfolio dashboard • historical data • no automated decisioning")
+st.markdown("""
+<div class="portfolio-kicker">Educational portfolio dashboard</div>
+<div class="portfolio-hero">
+  <h1>Credit Risk Analytics &amp; Explainable Default Prediction</h1>
+  <p>Historical-data analysis • calibrated risk ranking • no automated lending decisions</p>
+</div>
+""", unsafe_allow_html=True)
 
 tabs = st.tabs([
     "Project Overview", "EDA & Portfolio Patterns", "Model Performance & Calibration",
@@ -120,8 +134,8 @@ with tabs[2]:
         baseline = comparison["baseline"]
         engineered = comparison["engineered"]
         table = pd.DataFrame([
-            {"Feature set": "Baseline", "Features": baseline["feature_count"], "Selected model": baseline["selected_model"], "Validation ROC-AUC": baseline["validation_selected"]["roc_auc"], "Test ROC-AUC": baseline["test_selected"]["roc_auc"], "Test average precision": baseline["test_selected"]["average_precision"], "Test Brier": baseline["test_selected"]["brier_score"]},
-            {"Feature set": "Engineered", "Features": engineered["feature_count"], "Selected model": engineered["selected_model"], "Validation ROC-AUC": engineered["validation_selected"]["roc_auc"], "Test ROC-AUC": engineered["test_selected"]["roc_auc"], "Test average precision": engineered["test_selected"]["average_precision"], "Test Brier": engineered["test_selected"]["brier_score"]},
+            {"Feature set": "Baseline", "Feature count": baseline["feature_count"], "Selected model": baseline["selected_model"].upper(), "Validation ROC-AUC": baseline["validation_selected"]["roc_auc"], "Test ROC-AUC": baseline["test_selected"]["roc_auc"], "Test average precision": baseline["test_selected"]["average_precision"], "Test Brier score": baseline["test_selected"]["brier_score"]},
+            {"Feature set": "Engineered", "Feature count": engineered["feature_count"], "Selected model": engineered["selected_model"].upper(), "Validation ROC-AUC": engineered["validation_selected"]["roc_auc"], "Test ROC-AUC": engineered["test_selected"]["roc_auc"], "Test average precision": engineered["test_selected"]["average_precision"], "Test Brier score": engineered["test_selected"]["brier_score"]},
         ])
         st.dataframe(table.style.format({column: "{:.4f}" for column in table.columns[3:]}), use_container_width=True, hide_index=True)
         st.info("The engineered feature set improved validation ROC-AUC by only 0.0008, below the pre-specified 0.005 materiality margin. The simpler baseline therefore remained final.")
@@ -149,8 +163,9 @@ with tabs[3]:
         review = pd.DataFrame(rows)
         if not review.empty:
             display = review[["review_fraction", "accounts_reviewed", "observed_defaults_captured", "recall_of_observed_defaults", "precision_among_reviewed"]].copy()
-            display["review_fraction"] = display["review_fraction"].map(lambda value: f"Top {value:.0%}")
-            st.dataframe(display.style.format({"recall_of_observed_defaults": "{:.2%}", "precision_among_reviewed": "{:.2%}"}), hide_index=True, use_container_width=True)
+            display.columns = ["Review capacity", "Accounts reviewed", "Historical defaults captured", "Default capture", "Precision in queue"]
+            display["Review capacity"] = display["Review capacity"].map(lambda value: f"Top {value:.0%}")
+            st.dataframe(display.style.format({"Default capture": "{:.2%}", "Precision in queue": "{:.2%}"}), hide_index=True, use_container_width=True)
         top10 = review_row(rows)
         if top10:
             st.success(f"Demonstration policy: top 10% ranked accounts — {top10['accounts_reviewed']:,} reviewed; {top10['observed_defaults_captured']:,} historical defaults captured; {top10['recall_of_observed_defaults']:.2%} capture.")
@@ -159,13 +174,17 @@ with tabs[3]:
         st.write("These validation-only examples use transparent units: false positive × 1 plus false negative × 5 or × 10. They are not real banking costs, savings, or a rule for selecting a threshold.")
         thresholds = pd.DataFrame(calibration.get("validation_thresholds", []))
         if not thresholds.empty:
-            st.dataframe(thresholds[["threshold", "accounts_flagged", "precision", "recall", "false_positives", "false_negatives", "illustrative_cost_missed_5x_review", "illustrative_cost_missed_10x_review"]].style.format({"threshold": "{:.2f}", "precision": "{:.2%}", "recall": "{:.2%}"}), hide_index=True, use_container_width=True)
+            threshold_display = thresholds[["threshold", "accounts_flagged", "precision", "recall", "false_positives", "false_negatives", "illustrative_cost_missed_5x_review", "illustrative_cost_missed_10x_review"]].copy()
+            threshold_display.columns = ["Threshold", "Accounts flagged", "Precision", "Recall / capture", "False positives", "Missed defaults", "Illustrative cost (5×)", "Illustrative cost (10×)"]
+            with st.expander("View the validation threshold sensitivity table"):
+                st.dataframe(threshold_display.style.format({"Threshold": "{:.2f}", "Precision": "{:.2%}", "Recall / capture": "{:.2%}"}), hide_index=True, use_container_width=True)
         show_figure("12_validation_threshold_tradeoff.png", "Validation threshold trade-offs")
         show_figure("14_validation_cost_sensitivity.png", "Illustrative validation cost sensitivity")
 
 with tabs[4]:
     st.header("Explainability")
     st.caption("SHAP explains learned model associations in the frozen XGBoost model. It is not causality, certainty, fairness proof, or a decision instruction.")
+    st.info("Feature guide: `X6` is the latest recorded repayment-status code, `X1` is granted credit, `X12`–`X17` are bill amounts, and `X18`–`X23` are payment amounts.")
     left, right = st.columns(2)
     with left: show_figure("15_shap_global_beeswarm.png", "Global SHAP beeswarm: direction and size of sampled raw-model contributions")
     with right: show_figure("16_shap_global_mean_absolute_bar.png", "Global mean absolute SHAP values")
@@ -184,8 +203,8 @@ with tabs[4]:
             st.subheader(case_titles.get(name, name.replace("_", " ").title()))
             cols = st.columns(3)
             cols[0].metric("Calibrated historical risk", f"{case['calibrated_risk_probability']:.2%}")
-            cols[1].metric("Review status", "Top-10% queue" if "top 10%" in case["review_queue_status"] else "Outside queue")
-            cols[2].metric("Recorded outcome", "Default" if "recorded default" in case["actual_historical_outcome"] else "No recorded default")
+            cols[1].metric("Review status", "Top-10% queue" if case["review_queue_status"] == "top 10% review queue" else "Outside top-10% queue")
+            cols[2].metric("Recorded outcome", "Default" if case["actual_historical_outcome"] == "recorded default next month" else "No recorded default")
             show_figure(f"17_shap_local_{name}.png", "De-identified local SHAP waterfall: raw-model contributions only")
     st.warning("No person can be identified here. These three fixed examples are teaching cases, not profiles to copy into a real decision process.")
 
