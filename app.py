@@ -14,6 +14,9 @@ st.markdown("""
 <style>
     .stApp { background: #f5f8fc; color: #172b4d; }
     .block-container { max-width: 1440px; padding-top: 2.3rem; padding-bottom: 3rem; }
+    [data-testid="stSidebar"] { background: #102a43; }
+    [data-testid="stSidebar"] * { color: #eef6fa; }
+    [data-testid="stSidebar"] [data-testid="stAlert"] * { color: #172b4d; }
     [data-testid="stMetric"] { background: #ffffff; border: 1px solid #e1e8f0; border-top: 4px solid #0f766e; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(15, 39, 66, .05); }
     [data-testid="stMetricLabel"] { color: #52657d; font-size: .86rem; }
     [data-testid="stMetricValue"] { color: #102a43; }
@@ -23,6 +26,17 @@ st.markdown("""
     .portfolio-hero h1 { color: #ffffff; margin: 0; }
     .portfolio-hero p { color: #d9edf5; margin: .55rem 0 0; font-size: 1.05rem; }
     .section-note { color: #52657d; font-size: .95rem; }
+    .summary-card { background: #ffffff; border: 1px solid #e1e8f0; border-radius: 13px; padding: 1rem 1.1rem; min-height: 108px; box-shadow: 0 2px 8px rgba(15, 39, 66, .04); }
+    .summary-card .eyebrow { color: #0f766e; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .summary-card .summary-title { color: #102a43; font-size: 1.1rem; font-weight: 750; margin-top: .35rem; }
+    .summary-card .summary-detail { color: #52657d; font-size: .9rem; margin-top: .3rem; }
+    .kpi-card { background: #ffffff; border: 1px solid #e1e8f0; border-radius: 13px; border-top: 4px solid #0f766e; padding: 1rem; min-height: 116px; box-shadow: 0 2px 8px rgba(15, 39, 66, .05); }
+    .kpi-card .label { color: #52657d; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+    .kpi-card .value { color: #102a43; font-size: 2rem; line-height: 1.2; font-weight: 750; margin-top: .35rem; }
+    .kpi-card .detail { color: #64748b; font-size: .78rem; margin-top: .35rem; }
+    [data-baseweb="tab-list"] { gap: .4rem; border-bottom: 1px solid #dbe5ed; }
+    [data-baseweb="tab"] { background: #edf3f7; border-radius: 8px 8px 0 0; height: 42px; padding: 0 14px; font-weight: 600; color: #334e68; }
+    [aria-selected="true"][data-baseweb="tab"] { background: #dff4ee; color: #0f766e; }
     [data-testid="stDataFrame"] { border: 1px solid #e1e8f0; border-radius: 10px; overflow: hidden; }
 </style>
 """, unsafe_allow_html=True)
@@ -56,6 +70,24 @@ def show_figure(filename, caption):
 
 def review_row(rows, fraction=0.10):
     return next((row for row in rows or [] if abs(row.get("review_fraction", -1) - fraction) < 1e-9), None)
+
+
+def summary_card(eyebrow, title, detail):
+    """Render a presentation-only card from already saved, non-sensitive artifacts."""
+    st.markdown(
+        f'<div class="summary-card"><div class="eyebrow">{eyebrow}</div>'
+        f'<div class="summary-title">{title}</div><div class="summary-detail">{detail}</div></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def kpi_card(label, value, detail):
+    """Render a display card; this dashboard never calculates a new risk score."""
+    st.markdown(
+        f'<div class="kpi-card"><div class="label">{label}</div>'
+        f'<div class="value">{value}</div><div class="detail">{detail}</div></div>',
+        unsafe_allow_html=True,
+    )
 
 
 with st.sidebar:
@@ -92,17 +124,25 @@ with tabs[0]:
     st.caption("Each stage uses saved artifacts. This dashboard does not recalculate, retrain, or score any records.")
     st.subheader("Final educational setup")
     st.markdown("Frozen baseline **XGBoost** using `X1` and `X6`–`X23` → **isotonic calibration** → retrospective **top-10% ranked review queue**.")
+    st.caption("A compact end-to-end workflow designed for clear portfolio communication—not operational lending.")
+    overview_cards = st.columns(3)
+    with overview_cards[0]:
+        summary_card("01 · Model", "Frozen baseline XGBoost", "19 raw historical account fields; no demographics in modelling.")
+    with overview_cards[1]:
+        summary_card("02 · Probability", "Isotonic calibration", "Selected on validation data before one held-out test check.")
+    with overview_cards[2]:
+        summary_card("03 · Review simulation", "Top 10% ranked queue", "A fixed capacity demonstration, not a business decision rule.")
     calibration = require_json("calibration_threshold_metrics.json")
     if calibration:
         method = calibration["methods"][calibration["selected_calibration"]]["test"]
         top10 = review_row(calibration.get("final_test_review_capacity"))
         cols = st.columns(5)
-        cols[0].metric("Test ROC-AUC", f"{method['classification_metrics_at_0_50']['roc_auc']:.4f}")
-        cols[1].metric("Test average precision", f"{method['classification_metrics_at_0_50']['average_precision']:.4f}")
-        cols[2].metric("Test Brier score", f"{method['calibration']['brier_score']:.4f}")
+        with cols[0]: kpi_card("Test ROC-AUC", f"{method['classification_metrics_at_0_50']['roc_auc']:.4f}", "Ranking quality")
+        with cols[1]: kpi_card("Average precision", f"{method['classification_metrics_at_0_50']['average_precision']:.4f}", "Default-focused ranking")
+        with cols[2]: kpi_card("Brier score", f"{method['calibration']['brier_score']:.4f}", "Lower is better")
         if top10:
-            cols[3].metric("Top-10% capture", f"{top10['recall_of_observed_defaults']:.2%}")
-            cols[4].metric("Accounts reviewed", f"{top10['accounts_reviewed']:,}")
+            with cols[3]: kpi_card("Top-10% capture", f"{top10['recall_of_observed_defaults']:.2%}", "Recorded historical defaults")
+            with cols[4]: kpi_card("Accounts reviewed", f"{top10['accounts_reviewed']:,}", "Of 6,000 held-out accounts")
             st.warning(f"In this held-out historical simulation, {top10['observed_defaults_captured']:,} observed defaults appeared in the {top10['accounts_reviewed']:,}-account review queue. This does not mean defaults were prevented or savings were achieved.")
 
 with tabs[1]:
