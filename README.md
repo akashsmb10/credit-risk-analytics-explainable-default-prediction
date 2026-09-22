@@ -137,6 +137,10 @@ The live dashboard is read-only and uses saved historical analysis artifacts; it
 </p>
 
 <p align="center">
+  <img src="reports/figures/22_executive_portfolio_patterns.png" alt="Portfolio risk patterns: repayment-status association and historical bill and payment medians" width="92%">
+</p>
+
+<p align="center">
   <img src="reports/figures/23_executive_model_performance.png" alt="Model comparison and top learned associations" width="92%">
 </p>
 
