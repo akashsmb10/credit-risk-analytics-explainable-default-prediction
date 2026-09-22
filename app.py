@@ -246,7 +246,7 @@ if page == "◎  Review simulation":
 
 if page == "✦  Explainability":
     st.header("Explainability")
-    st.markdown('<div class="page-banner"><strong>Question:</strong> Which historical account fields most influenced the frozen model's learned associations?</div>', unsafe_allow_html=True)
+    st.markdown("<div class=\"page-banner\"><strong>Question:</strong> Which historical account fields most influenced the frozen model's learned associations?</div>", unsafe_allow_html=True)
     st.caption("SHAP explains learned model associations in the frozen XGBoost model. It is not causality, certainty, fairness proof, or a decision instruction.")
     st.info("Feature guide: `X6` is the latest recorded repayment-status code, `X1` is granted credit, `X12`–`X17` are bill amounts, and `X18`–`X23` are payment amounts.")
     left, right = st.columns(2)
